@@ -14,11 +14,11 @@
   [![UI ](https://img.shields.io/badge/User%20Interface-Link%20to%20UI-orange?style=flat-square&logo=appveyor)](INSERT_UI_LINK_HERE)
 
 
-## Features
-- [ ]  < feature >
-- [ ]  < feature >
-- [ ]  < feature >
-- [ ]  < feature >
+## Features (For backend)
+- [ ]  < Details of a user's playlist is received >
+- [ ]  < A song from this playlist will be chosen when an alarm is set >
+- [ ]  < Depending on the tags set, and the song specifics like acousticness, danceability, instrumentalness etc., a song from the playlist is chosen using machine learning >
+- [ ]  < The song is then returned to the user, and an alarm is registered on the phone >
 
 <br>
 
