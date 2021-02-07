@@ -16,7 +16,7 @@
 
 ## Features (For backend)
 - [ ]  < Details of a user's playlist is received >
-- [ ]  < A song from this playlist will be chosen when an alarm is set >
+- [ ]  < A song from this playlist will be chosen when an alarm is set by the user >
 - [ ]  < Depending on the tags given by the user, and the song specifics like acousticness, danceability, instrumentalness etc., a song from the playlist is chosen using machine learning >
 - [ ]  < The song is then returned to the user, and an alarm is registered on the phone >
 
