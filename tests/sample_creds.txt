@@ -1,0 +1,6 @@
+<spotify client id>
+<spotify client secret>
+<firebase api key>
+<firebase authentication domain>
+<firebase database url>
+<firebase storage bucket url>
