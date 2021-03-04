@@ -37,15 +37,15 @@ token = auth.get_access_token()
 spotify = spotipy.Spotify(auth=token)
 
 # Showing features of a song
-# features = spotify.track('https://open.spotify.com/track/1tm4Bl2E5RwTevOiBs4gtH?si=X7KuHtN6TQ6lZ15ijB4v4A')
-# print(features)
+features = spotify.track('https://open.spotify.com/track/1tm4Bl2E5RwTevOiBs4gtH?si=X7KuHtN6TQ6lZ15ijB4v4A')
+print(features)
 
 # Showing features of a playlist, including songs present in it (returns only 100 songs)
-# response = spotify.playlist_items('https://open.spotify.com/playlist/2kUbABZX9A2m0b6fopyouM?si=7gk-1UcdTN-oJnRpwZlFwA')
-# print(response)
+response = spotify.playlist_items('https://open.spotify.com/playlist/2kUbABZX9A2m0b6fopyouM?si=7gk-1UcdTN-oJnRpwZlFwA')
+print(response)
 
 # Getting audio features of a song from spotify
-# print(spotify.audio_features(['https://open.spotify.com/track/1tm4Bl2E5RwTevOiBs4gtH?si=X7KuHtN6TQ6lZ15ijB4v4A']))
+print(spotify.audio_features(['https://open.spotify.com/track/1tm4Bl2E5RwTevOiBs4gtH?si=X7KuHtN6TQ6lZ15ijB4v4A']))
 
 # Function to get all songs of the playlist, not just 100 songs
 def get_playlist_tracks(playlist_id):
@@ -59,11 +59,21 @@ def get_playlist_tracks(playlist_id):
 
 # Gets all details of all songs in thee playlist
 track_list = get_playlist_tracks(
-    "https://open.spotify.com/playlist/3It5BuAucg59mpLzILUS70?si=kAj3vfBESyOHF8c-2d5qNw"
+    "https://open.spotify.com/playlist/3It5BuAucg59mpLzILUS70?si=8MrxgpaWQhmvzLl1sBA_2A"
 )
-featurelst = []
-# getting features
+track_id = []
 for i in track_list:
     if i["track"]["id"] != None:
-        # Need to optimise this api call, it takes way too long
-        featurelst.append(spotify.audio_features(["spotify:track:" + i["track"]["id"]]))
+        track_id.append("spotify:track:" + i["track"]["id"])
+
+# Function to get all features of a given list of song ids
+def get_audio_features(track_ids):
+    # getting features
+    featurelst = []
+    count = 0
+    while count<=len(track_id):
+        featurelst.extend(spotify.audio_features(track_ids[count:count+100]))
+        count = count+100
+    return featurelst
+
+print(get_audio_features(track_id))
