@@ -12,9 +12,10 @@ As this is the backend code, authentication for this program to access the fireb
 This is why a service account should be generated for this program
 requirements: pyrebase4 (https://github.com/nhorvath/Pyrebase4)
 """
+import time
+
 # Importing pyrebase
 import pyrebase
-import time
 
 # Getting creds from the creds file
 with open("creds.txt") as file:
