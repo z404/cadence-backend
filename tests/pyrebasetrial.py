@@ -16,20 +16,18 @@ import time
 
 # Importing pyrebase
 import pyrebase
+import yaml
 
 # Getting creds from the creds file
-with open("creds.txt") as file:
-    data = file.readlines()
-    apikey = data[2].strip("\n")
-    authDomain = data[3].strip("\n")
-    databaseurl = data[4].strip("\n")
-    storagebucket = data[5].strip("\n")
+with open("creds.yaml") as file:
+    creds = yaml.full_load(file)
+
 # Creating the config dictionary using the credentials
 config = {
-    "apiKey": apikey,
-    "authDomain": authDomain,
-    "databaseURL": databaseurl,
-    "storageBucket": storagebucket,
+    "apiKey": creds["firebase api key"],
+    "authDomain": creds["firebase authentication domain"],
+    "databaseURL": creds["firebase database url"],
+    "storageBucket": creds["firebase storage bucket url"],
     "serviceAccount": "serviceacc.json",
 }
 

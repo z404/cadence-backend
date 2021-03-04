@@ -20,12 +20,14 @@ requirements: spotipy (https://github.com/plamere/spotipy)
 # Importing spotify packages
 import spotipy
 import spotipy.oauth2 as oauth2
+import yaml
 
 # Opening credential file
-with open("creds.txt") as file:
-    creds = file.readlines()
-    cli_id = creds[0].rstrip("\n")
-    cli_sec = creds[1].rstrip("\n")
+with open("creds.yaml") as file:
+    creds = yaml.full_load(file)
+
+cli_id = creds["spotify client id"]
+cli_sec = creds["spotify client secret"]
 
 # Creating spotify auth object to authenticate spotify object
 auth = oauth2.SpotifyClientCredentials(client_id=cli_id, client_secret=cli_sec)
