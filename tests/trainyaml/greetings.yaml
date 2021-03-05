@@ -1,0 +1,42 @@
+# Greet_Normal intent
+---
+type: intent
+name: Greet_Normal
+utterances:
+  - Hello
+  - Hi
+  - Howdy
+  - Greetings
+  - Good to see you
+  - Great to see you again
+
+# Greet_WithQuestion intent
+---
+type: intent
+name: Greet_WithQuestion
+utterances:
+  - Hello! How are you?
+  - Hi! How do you do?
+  - What's Up
+
+# Greet_WithTime intent
+---
+type: intent
+name: Greet_WithTime
+slots:
+  - name: TimeOfDay
+    entity: TimeOfDay
+utterances:
+  - Good [TimeOfDay](morning)!
+  - Have a great [TimeOfDay](night)
+   
+# TimeOfDay entity
+---
+type: entity
+name: TimeOfDay
+automatically_extensible: yes
+values:
+- morning
+- night
+- [afternoon, noon]
+- midnight

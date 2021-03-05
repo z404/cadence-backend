@@ -1,2 +1,4 @@
 spotipy
 pyrebase4
+setuptools-rust
+snips-nlu
