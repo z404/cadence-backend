@@ -31,7 +31,7 @@ def create_nlp_model():
     This function trains a new ML model from the given dataset. It then saves the model in the root directory of the project with the file name: nlpumodel
     This function will only be called once, at the start of the program, if nlumodel file is not detected in the current directory
     Parameters required: None
-    Return data: None
+    Return data: Trained SnipsNLUEngine object
     """
     # Creating a barebones engine
     engine = SnipsNLUEngine(config=CONFIG_EN)
@@ -55,3 +55,46 @@ def create_nlp_model():
         engine.persist("nlumodel")
 
     print("NLP model has been created and saved in directory: nlumodel")
+
+
+# Function to detect intent of string
+def detect_intent(nlumodel: SnipsNLUEngine, string: str):
+    """
+    This function detects the intent and the slots a string contains, if it is provided with a trained model and a string
+    Parameters required: SnipsNLUEngine object, string
+    Return data: Dictionary with keys ['intent','slotflag','slots']
+
+    If slots are not detected, slotflag will be returned as False and vice versa
+    """
+    # Parsing the given string using the pretrained model
+    output = nlumodel.parse(string)
+    # Obtaining intent from parsed string
+    intent = output["intent"]["intentName"]
+    # Checking for slots
+    slotflag = True if output["slots"] != [] else False
+    # Obtaining slots from parsed string
+    slots = output["slots"]
+    # Returning obtained information
+    return {"intent": intent, "slotflag": slotflag, "slots": slots}
+
+
+def main():
+    """
+    This is the main function, which starts the main flow of the servers
+    """
+    # Initializing NLPU
+    if os.path.isdir("nlumodel"):
+        # If trained model exists, load it
+        nluengine = SnipsNLUEngine.from_path("nlumodel")
+    else:
+        # If model doesnt exist, then create a new one
+        nluengine = create_nlp_model()
+
+    # In main flow, start firebase listener here
+
+    # Testing detect_intent()
+    output_intent = detect_intent(nluengine, "Turn the light on in the garden")
+    print(output_intent)
+
+
+main()
