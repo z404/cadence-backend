@@ -55,6 +55,8 @@ def create_nlp_model():
         engine.persist("nlumodel")
 
     print("NLP model has been created and saved in directory: nlumodel")
+    # Returning trained engine
+    return engine
 
 
 # Function to detect intent of string
@@ -95,6 +97,8 @@ def main():
     # Testing detect_intent()
     output_intent = detect_intent(nluengine, "Turn the light on in the garden")
     print(output_intent)
+    return 0
 
 
+# Start main function
 main()
