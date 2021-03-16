@@ -1,0 +1,34 @@
+# study intent
+---
+type: intent
+name: study
+slots:
+  - name: subject
+    entity: subject
+  - name: time
+    entity: snips/datetime
+utterances:
+  - I need to study
+  - Study time
+  - Exam at [time](2 am)
+  - Test on [subject](Chemistry)
+  - Need to do [subject](Russian)
+  - Need to do my assignment by [time](tommorow)
+  - Complete the chapter
+  - Finish the topic
+  - Submit my homework
+
+# subject entity
+---
+type: entity
+name: subject
+automatically_extensible: yes
+values:
+- Chemistry
+- Biology
+- Data Science
+- History
+- Geography
+- Language
+- English
+- Hindi
