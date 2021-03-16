@@ -1,0 +1,46 @@
+# travel intent
+---
+type: intent
+name: travel
+slots:
+  - name: dest
+    entity: dest
+  - name: destcity
+    entity: snips/city
+  - name: destcountry
+    entity: snips/country
+  - name: destregion
+    entity: snips/region
+  - name: time
+    entity: snips/datetime
+  - name: transport
+    entity: transport
+utterances:
+  - To go to [dest](airport)
+  - Going to [destcity](Huston)
+  - Travel at [time](5 am)
+  - Catching a [transport](plane)
+
+# dest entity
+---
+type: entity
+name: dest
+automatically_extensible: yes
+values:
+- airport
+- bank
+- post office
+- office
+- [home, house]
+- busstop
+- train station
+
+# transport entity
+---
+type: entity
+name: transport
+automatically_extensible: yes
+values:
+- train
+- [plane, flight]
+- bus

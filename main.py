@@ -88,14 +88,17 @@ def main():
     if os.path.isdir("nlumodel"):
         # If trained model exists, load it
         nluengine = SnipsNLUEngine.from_path("nlumodel")
+        print('Loaded local nlumodel save found in directory')
     else:
         # If model doesnt exist, then create a new one
         nluengine = create_nlp_model()
+        print('Trained and loaded new model')
 
     # In main flow, start firebase listener here
 
     # Testing detect_intent()
-    output_intent = detect_intent(nluengine, "Turn the light on in the garden")
+    string = input()
+    output_intent = detect_intent(nluengine, string)
     print(output_intent)
     return 0
 
