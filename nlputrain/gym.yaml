@@ -1,0 +1,46 @@
+# study intent
+---
+type: intent
+name: gym
+slots:
+  - name: work
+    entity: work
+  - name: time
+    entity: snips/datetime
+  - name: sport
+    entity: sport
+utterances:
+  - Need to go [work](jogging) at [time](6 am)
+  - Gym time
+  - Workout
+  - Hit the [work](gym)
+  - I need to [work](excersize)
+  - get to the gym
+  - Need to go play [sport](throwball)
+
+# work entity
+---
+type: entity
+name: work
+automatically_extensible: yes
+values:
+- jogging
+- Push ups
+- gym
+- cycle
+- workout
+- excersize
+- fitness
+- stamina
+- sprint
+
+# sport entity
+---
+type: entity
+name: sport
+automatically_extensible: yes
+values:
+- cricket
+- football
+- basketball
+- hockey
