@@ -88,11 +88,11 @@ def main():
     if os.path.isdir("nlumodel"):
         # If trained model exists, load it
         nluengine = SnipsNLUEngine.from_path("nlumodel")
-        print('Loaded local nlumodel save found in directory')
+        print("Loaded local nlumodel save found in directory")
     else:
         # If model doesnt exist, then create a new one
         nluengine = create_nlp_model()
-        print('Trained and loaded new model')
+        print("Trained and loaded new model")
 
     # In main flow, start firebase listener here
 
