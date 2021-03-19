@@ -1,0 +1,14 @@
+# yoga intent
+---
+type: intent
+name: yoga
+slots:
+  - name: time
+    entity: snips/datetime
+utterances:
+  - Need to wake up for yoga
+  - For yoga
+  - Meditation and yoga
+  - I need to stretch
+  - Need to do yogaa
+  - Calm mind exercise
