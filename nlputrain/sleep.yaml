@@ -1,0 +1,15 @@
+# sleep intent
+---
+type: intent
+name: sleep
+slots:
+  - name: time
+    entity: snips/datetime
+utterances:
+  - I need to sleep at [time](10 pm)
+  - Go to bed
+  - gotta go hit the sack
+  - Get some rest
+  - Im very sleepy
+  - Take a nap
+  - Lie down for a while
