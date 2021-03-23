@@ -12,11 +12,13 @@ slots:
 utterances:
   - Need to go [work](jogging) at [time](6 am)
   - Gym time
+  - walking / jogging / gymming
   - Workout
   - Hit the [work](gym)
   - I need to [work](excersize)
   - get to the gym
   - Need to go play [sport](throwball)
+  - Go for a [work](sprint)
 
 # work entity
 ---
@@ -24,7 +26,8 @@ type: entity
 name: work
 automatically_extensible: yes
 values:
-- jogging
+- jog
+- walk
 - Push ups
 - gym
 - cycle

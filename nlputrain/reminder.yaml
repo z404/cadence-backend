@@ -1,0 +1,49 @@
+# reminder intent
+---
+type: intent
+name: reminder
+slots:
+  - name: meeting
+    entity: meeting
+  - name: name
+    entity: name
+  - name: time
+    entity: snips/datetime
+  - name: reminder
+    entity: rem
+utterances:
+  - Have a meeting
+  - Need to meet with [name](Ananya)
+  - Join a [meeting](class)
+  - Remind me to [reminder](submit my assignment)
+  - Project deadline
+  - Have to submit assignment
+  - Prepare for [rem](review 1)
+  - remind me to [rem](catch a flight) at [time](7pm)
+
+# meeting entity
+---
+type: entity
+name: meeting
+automatically_extensible: yes
+values:
+- meeting
+- class
+- call
+- video call
+
+# rem entity
+---
+type: entity
+name: rem
+automatically_extensible: yes
+values:
+- catch flight
+- submit assignment
+- do homework
+- check results
+- take the car to wash
+- take a shower
+- call the maid
+- repair phone
+- finish project
