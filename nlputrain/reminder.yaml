@@ -20,6 +20,7 @@ utterances:
   - Have to submit assignment
   - Prepare for [rem](review 1)
   - remind me to [rem](catch a flight) at [time](7pm)
+  - remember to [rem](take a break)
 
 # meeting entity
 ---
@@ -47,3 +48,5 @@ values:
 - call the maid
 - repair phone
 - finish project
+- take a break
+- break time

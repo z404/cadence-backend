@@ -13,12 +13,13 @@ utterances:
   - Need to go [work](jogging) at [time](6 am)
   - Gym time
   - walking / jogging / gymming
-  - Workout
+  - Need to do [work](Cardio)
   - Hit the [work](gym)
   - I need to [work](excersize)
   - get to the gym
   - Need to go play [sport](throwball)
   - Go for a [work](sprint)
+  - Get ripped 
 
 # work entity
 ---
@@ -36,6 +37,11 @@ values:
 - fitness
 - stamina
 - sprint
+- Workout
+- Active Exercise
+- Cardio
+- Weight Lifting
+- Bulk up
 
 # sport entity
 ---
