@@ -19,6 +19,9 @@ import os
 import pickle
 import shutil
 
+import spotipy
+import spotipy.oauth2 as oauth2
+import yaml
 from snips_nlu import SnipsNLUEngine
 from snips_nlu.dataset import dataset
 from snips_nlu.default_configs import CONFIG_EN
@@ -80,6 +83,23 @@ def detect_intent(nlumodel: SnipsNLUEngine, string: str):
     return {"intent": intent, "slotflag": slotflag, "slots": slots}
 
 
+# Function to get new Spotify Object
+def newSpotifyObject(cli_id: str, cli_sec: str):
+    """
+    This function takes input of a spotify account's Client ID and Client Secret, and creates a new spotify object
+    Parameters required: Client ID and Client Secret for Spotify (strings)
+    Return data: Authenticated Spotify Object (spotipy.client.Spotify)
+    """
+    # Creating spotify auth object to authenticate spotify object
+    auth = oauth2.SpotifyClientCredentials(client_id=cli_id, client_secret=cli_sec)
+    # Get access token from spotify
+    token = auth.get_access_token(as_dict=False)
+    # Create spotify object
+    spotify = spotipy.Spotify(auth=token)
+    # Returning Spotify Object
+    return spotify
+
+
 def main():
     """
     This is the main function, which starts the main flow of the servers
@@ -94,13 +114,23 @@ def main():
         nluengine = create_nlp_model()
         print("Trained and loaded new model")
 
+    # Initializing Spotify Credentials
+    with open("creds.yaml") as file:
+        creds = yaml.full_load(file)
+
+    cli_id = creds["spotify client id"]
+    cli_sec = creds["spotify client secret"]
+
     # In main flow, start firebase listener here
 
     # Testing detect_intent()
-    string = input()
-    output_intent = detect_intent(nluengine, string)
-    print(output_intent)
-    return 0
+    # string = input()
+    # output_intent = detect_intent(nluengine, string)
+    # print(output_intent)
+    # return 0
+
+    # Testing newSpotifyObject()
+    print(newSpotifyObject(cli_id, cli_sec))
 
 
 # Start main function
