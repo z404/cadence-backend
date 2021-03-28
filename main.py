@@ -99,28 +99,30 @@ def newSpotifyObject(cli_id: str, cli_sec: str):
     # Returning Spotify Object
     return spotify
 
+
 def get_playlist_tracks(spotify: spotipy.client.Spotify, playlist_id: str):
     """
     This function takes an authenticated Spotify client, and a playlist ID, and returns a list of song IDs of every song in the playlist
     Parameters required: Authenticated Spotify Client, and playlist ID or URL
     Return Data: List of song IDs in the playlist
     """
-    #Get first 100 or lesser songs' details
+    # Get first 100 or lesser songs' details
     results = spotify.playlist_items(playlist_id)
-    #Check if there are more songs for which details need to be obtained
+    # Check if there are more songs for which details need to be obtained
     tracks = results["items"]
     while results["next"]:
-        #Get next 100 songs' details, and append to the list of results already obtained
+        # Get next 100 songs' details, and append to the list of results already obtained
         results = spotify.next(results)
         tracks.extend(results["items"])
-    #Create new list to hold track IDs
+    # Create new list to hold track IDs
     track_id = []
-    #Extract each track ID from the extracted information, and append to track_id list
+    # Extract each track ID from the extracted information, and append to track_id list
     for i in tracks:
         if i["track"]["id"] != None:
             track_id.append("spotify:track:" + i["track"]["id"])
-    #Return all track IDs
+    # Return all track IDs
     return track_id
+
 
 def main():
     """
@@ -152,7 +154,10 @@ def main():
     # return 0
 
     # Testing newSpotifyObject()
-    playlist_song_ids = get_playlist_tracks(newSpotifyObject(cli_id, cli_sec),"https://open.spotify.com/playlist/3It5BuAucg59mpLzILUS70?si=8MrxgpaWQhmvzLl1sBA_2A")
+    playlist_song_ids = get_playlist_tracks(
+        newSpotifyObject(cli_id, cli_sec),
+        "https://open.spotify.com/playlist/3It5BuAucg59mpLzILUS70?si=8MrxgpaWQhmvzLl1sBA_2A",
+    )
     print(playlist_song_ids)
 
 
