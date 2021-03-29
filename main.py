@@ -100,6 +100,7 @@ def newSpotifyObject(cli_id: str, cli_sec: str):
     return spotify
 
 
+# Function to get playlist tracks
 def get_playlist_tracks(spotify: spotipy.client.Spotify, playlist_id: str):
     """
     This function takes an authenticated Spotify client, and a playlist ID, and returns a list of song IDs of every song in the playlist
@@ -122,6 +123,18 @@ def get_playlist_tracks(spotify: spotipy.client.Spotify, playlist_id: str):
             track_id.append("spotify:track:" + i["track"]["id"])
     # Return all track IDs
     return track_id
+
+
+# Function to get all features of a given list of song ids
+def get_audio_features(spotify: spotipy.client.Spotify, track_ids: list):
+    # Getting features
+    featurelst = []
+    count = 0
+    while count <= len(track_ids):
+        # Get 100 songs' features at a time. Getting any more will result in bad result error
+        featurelst.extend(spotify.audio_features(track_ids[count : count + 100]))
+        count = count + 100
+    return featurelst
 
 
 def main():
@@ -159,6 +172,7 @@ def main():
         "https://open.spotify.com/playlist/3It5BuAucg59mpLzILUS70?si=8MrxgpaWQhmvzLl1sBA_2A",
     )
     print(playlist_song_ids)
+    print(get_audio_features(newSpotifyObject(cli_id, cli_sec), playlist_song_ids))
 
 
 # Start main function
