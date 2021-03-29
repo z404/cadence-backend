@@ -84,12 +84,19 @@ def detect_intent(nlumodel: SnipsNLUEngine, string: str):
 
 
 # Function to get new Spotify Object
-def newSpotifyObject(cli_id: str, cli_sec: str):
+def newSpotifyObject():
     """
     This function takes input of a spotify account's Client ID and Client Secret, and creates a new spotify object
-    Parameters required: Client ID and Client Secret for Spotify (strings)
+    Parameters required: None
     Return data: Authenticated Spotify Object (spotipy.client.Spotify)
     """
+    # Initializing Spotify Credentials
+    with open("creds.yaml") as file:
+        creds = yaml.full_load(file)
+
+    cli_id = creds["spotify client id"]
+    cli_sec = creds["spotify client secret"]
+
     # Creating spotify auth object to authenticate spotify object
     auth = oauth2.SpotifyClientCredentials(client_id=cli_id, client_secret=cli_sec)
     # Get access token from spotify
@@ -151,13 +158,6 @@ def main():
         nluengine = create_nlp_model()
         print("Trained and loaded new model")
 
-    # Initializing Spotify Credentials
-    with open("creds.yaml") as file:
-        creds = yaml.full_load(file)
-
-    cli_id = creds["spotify client id"]
-    cli_sec = creds["spotify client secret"]
-
     # In main flow, start firebase listener here
 
     # Testing detect_intent()
@@ -168,11 +168,11 @@ def main():
 
     # Testing newSpotifyObject()
     playlist_song_ids = get_playlist_tracks(
-        newSpotifyObject(cli_id, cli_sec),
+        newSpotifyObject(),
         "https://open.spotify.com/playlist/3It5BuAucg59mpLzILUS70?si=8MrxgpaWQhmvzLl1sBA_2A",
     )
     print(playlist_song_ids)
-    print(get_audio_features(newSpotifyObject(cli_id, cli_sec), playlist_song_ids))
+    print(get_audio_features(newSpotifyObject(), playlist_song_ids))
 
 
 # Start main function
