@@ -29,7 +29,7 @@ from snips_nlu.exceptions import PersistingError
 
 
 # Function to create NLP model
-def create_nlp_model():
+def create_nlp_model() -> SnipsNLUEngine:
     """
     This function trains a new ML model from the given dataset. It then saves the model in the root directory of the project with the file name: nlpumodel
     This function will only be called once, at the start of the program, if nlumodel file is not detected in the current directory
@@ -63,7 +63,7 @@ def create_nlp_model():
 
 
 # Function to detect intent of string
-def detect_intent(nlumodel: SnipsNLUEngine, string: str):
+def detect_intent(nlumodel: SnipsNLUEngine, string: str) -> dict:
     """
     This function detects the intent and the slots a string contains, if it is provided with a trained model and a string
     Parameters required: SnipsNLUEngine object, string
@@ -84,9 +84,9 @@ def detect_intent(nlumodel: SnipsNLUEngine, string: str):
 
 
 # Function to get new Spotify Object
-def newSpotifyObject():
+def newSpotifyObject() -> spotipy.client.Spotify:
     """
-    This function takes input of a spotify account's Client ID and Client Secret, and creates a new spotify object
+    This function creates a new spotify object using the creds.yaml file in the root folder to authenticate the object
     Parameters required: None
     Return data: Authenticated Spotify Object (spotipy.client.Spotify)
     """
@@ -108,7 +108,7 @@ def newSpotifyObject():
 
 
 # Function to get playlist tracks
-def get_playlist_tracks(spotify: spotipy.client.Spotify, playlist_id: str):
+def get_playlist_tracks(spotify: spotipy.client.Spotify, playlist_id: str) -> list:
     """
     This function takes an authenticated Spotify client, and a playlist ID, and returns a list of song IDs of every song in the playlist
     Parameters required: Authenticated Spotify Client, and playlist ID or URL
@@ -133,7 +133,15 @@ def get_playlist_tracks(spotify: spotipy.client.Spotify, playlist_id: str):
 
 
 # Function to get all features of a given list of song ids
-def get_audio_features(spotify: spotipy.client.Spotify, track_ids: list):
+def get_audio_features(spotify: spotipy.client.Spotify, track_ids: list) -> list:
+    """
+    This function gets the following features of a spotify song, hundred songs at a time:
+    ["acousticness", "danceability", "durationms", "energy", "instrumentalness", "key", "liveness", "loudness", "mode", "speechiness"\
+        , "tempo", "timesignature", "valence"]
+    Getting more than 100 songs will result in a bad request error
+    Parameters Required: Authenticated Spotify Client, and list of song IDs
+    Return Data: List of dictionary containing song features
+    """
     # Getting features
     featurelst = []
     count = 0
@@ -158,7 +166,9 @@ def main():
         nluengine = create_nlp_model()
         print("Trained and loaded new model")
 
-    # In main flow, start firebase listener here
+    # TODO
+    # Check if ML model for song classification exists, and add to program
+    # Start firebase listener here
 
     # Testing detect_intent()
     # string = input()
@@ -166,13 +176,13 @@ def main():
     # print(output_intent)
     # return 0
 
-    # Testing newSpotifyObject()
-    playlist_song_ids = get_playlist_tracks(
-        newSpotifyObject(),
-        "https://open.spotify.com/playlist/3It5BuAucg59mpLzILUS70?si=8MrxgpaWQhmvzLl1sBA_2A",
-    )
-    print(playlist_song_ids)
-    print(get_audio_features(newSpotifyObject(), playlist_song_ids))
+    # Testing newSpotifyObject(), playlist_song_ids(), and get_audio_features()
+    # playlist_song_ids = get_playlist_tracks(
+    #     newSpotifyObject(),
+    #    "https://open.spotify.com/playlist/3It5BuAucg59mpLzILUS70?si=8MrxgpaWQhmvzLl1sBA_2A",
+    # )
+    # print(playlist_song_ids)
+    # print(get_audio_features(newSpotifyObject(), playlist_song_ids))
 
 
 # Start main function
