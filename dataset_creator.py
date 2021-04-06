@@ -18,13 +18,12 @@ import yaml
 
 # Creating dict of playlist urls
 playlist_dict = {
-    "Travel": [
-        "https://open.spotify.com/playlist/0yXe2Ok6uWm15lzStDZIyN?si=4q7fe4A3QHGX-gXVCLHuwg",
-        "https://open.spotify.com/playlist/4du84WTLemvL4Pp2DAvlby?si=xuE2b2bXQRijycPi9kLlzw",
-    ],
+    # "Travel": [
+    #     "https://open.spotify.com/playlist/0yXe2Ok6uWm15lzStDZIyN?si=4q7fe4A3QHGX-gXVCLHuwg",
+    #     "https://open.spotify.com/playlist/4du84WTLemvL4Pp2DAvlby?si=xuE2b2bXQRijycPi9kLlzw",
+    # ],
     "Study": [
-        "https://open.spotify.com/playlist/0vvXsWCC9xrXsKd4FyS8kM?si=NPJk2Lh0QsOzk5uuS9CpOQ",
-        "https://open.spotify.com/playlist/1la2NHrMKqHtzrewaAJ46Q?si=LyrXsJzWTLmRXoXW90XBYw",
+        "https://open.spotify.com/playlist/0vvXsWCC9xrXsKd4FyS8kM?si=aEAuimj4R8-7encKbkv8lg"
     ],
     "Gym": [
         "https://open.spotify.com/playlist/0L33OqcgnqcdtUDhUAyfPW?si=vSKSLbnZQpig_rnjXmdLAg",
@@ -34,12 +33,12 @@ playlist_dict = {
         "https://open.spotify.com/playlist/37i9dQZF1DX9uKNf5jGX6m?si=W65q_28zT0mkIwuodAQxMQ",
         "https://open.spotify.com/playlist/59Mv9oVmx1wIQAaOoLWceY?si=Euwj3oZjQs2bugNCH67I1A",
     ],
-    "Meetings": [
-        "https://open.spotify.com/playlist/4LJ5hkgqt04IKw454SUJqV?si=_BdJz3YlS6-biDd4Kv8Fpw"
-    ],
+    # "Meetings": [
+    #     "https://open.spotify.com/playlist/4LJ5hkgqt04IKw454SUJqV?si=_BdJz3YlS6-biDd4Kv8Fpw"
+    # ],
     "Sleep": [
-        "https://open.spotify.com/playlist/37i9dQZF1DWYcDQ1hSjOpY?si=J5Kv5LTbRleoBHzBG77lZQ",
-        "https://open.spotify.com/playlist/21wbvqMl5HNxhfi2cNqsdZ?si=KYaPFJoYSwapUGPAU3smXQ",
+        "https://open.spotify.com/playlist/21wbvqMl5HNxhfi2cNqsdZ?si=oalBs9Q1TyqoV1InDYeaYA",
+        "https://open.spotify.com/playlist/37i9dQZF1DWYcDQ1hSjOpY?si=cddd6iLKQVei4H4Ko-VAcg"
     ],
 }
 
