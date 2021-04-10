@@ -1,3 +1,5 @@
+import pickle
+
 import numpy as np
 import pandas as pd
 import spotipy
@@ -55,6 +57,16 @@ def train_accuracy(model, X_train, y_train):
 
 def songpred(model, X, Y):
     model.fit(X, Y)
+    try:
+        with open("MLModel.pickle", "rb") as handle:
+            model = pickle.load(handle)
+        print("Loaded file")
+    except FileNotFoundError:
+        model.fit(X, Y)
+        with open("MLModel.pickle", "wb") as handle:
+            pickle.dump(model, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        print("Created Model")
+
     song_url = input()
 
     # Opening credential file
@@ -76,7 +88,9 @@ def songpred(model, X, Y):
         if i in columns_to_be_dropped:
             del song_x[i]
     y_pred = model.predict(song_x)
-    print(y_pred)
+
+    y_pred2 = model.predict_proba(song_x)
+    print(y_pred, "\n\n", y_pred2, model.classes_)
 
 
 # test_accuracy(model, X_train, X_test, y_train, y_test)

@@ -19,6 +19,8 @@ import os
 import pickle
 import shutil
 
+import numpy as np
+import pandas as pd
 import spotipy
 import spotipy.oauth2 as oauth2
 import yaml
@@ -110,9 +112,9 @@ def newSpotifyObject() -> spotipy.client.Spotify:
 # Function to get playlist tracks
 def get_playlist_tracks(spotify: spotipy.client.Spotify, playlist_id: str) -> list:
     """
-    This function takes an authenticated Spotify client, and a playlist ID, and returns a list of song IDs of every song in the playlist
+    This function takes an authenticated Spotify client, and a playlist ID, and returns a list of song details of every song in the playlist
     Parameters required: Authenticated Spotify Client, and playlist ID or URL
-    Return Data: List of song IDs in the playlist
+    Return Data: List of song details in the playlist
     """
     # Get first 100 or lesser songs' details
     results = spotify.playlist_items(playlist_id)
@@ -123,11 +125,24 @@ def get_playlist_tracks(spotify: spotipy.client.Spotify, playlist_id: str) -> li
         results = spotify.next(results)
         tracks.extend(results["items"])
     # Create new list to hold track IDs
-    track_id = []
-    # Extract each track ID from the extracted information, and append to track_id list
-    for i in tracks:
+    track_id = {}
+    # Extract each track detail from the extracted information, and append to track_id list
+    track_id["IDs"] = []
+    track_id["Name"] = []
+    track_id["Artist"] = []
+    track_id["Popularity"] = []
+    for i in tracks:  # Looping through all tracks
         if i["track"]["id"] != None:
-            track_id.append("spotify:track:" + i["track"]["id"])
+            track_id["IDs"].append(
+                "spotify:track:" + i["track"]["id"]
+            )  # Get ID of song
+            track_id["Name"].append(i["track"]["name"])  # Get Name of song
+            track_id["Artist"].append(
+                i["track"]["artists"][0]["name"]
+            )  # Get main Artist of song
+            track_id["Popularity"].append(
+                i["track"]["popularity"]
+            )  # Get popularity of songs
     # Return all track IDs
     return track_id
 
@@ -152,6 +167,78 @@ def get_audio_features(spotify: spotipy.client.Spotify, track_ids: list) -> list
     return featurelst
 
 
+# Function to create dataset with certain songs
+def create_dataset() -> None:
+    """
+    This function creates a csv file based on urls given below for specific tags. The csv will later be used to create the ML model,
+    which will be used to classify songs into the below tags
+    Tags: ['Study', 'Gym','Yoga','Sleep']
+    Parameters Required: None
+    Return Data: None
+    """
+    # Record of all urls that contribute to a tag
+    playlist_dict = {
+        # "Travel": [
+        #     "https://open.spotify.com/playlist/0yXe2Ok6uWm15lzStDZIyN?si=4q7fe4A3QHGX-gXVCLHuwg",
+        #     "https://open.spotify.com/playlist/4du84WTLemvL4Pp2DAvlby?si=xuE2b2bXQRijycPi9kLlzw",
+        # ],
+        "Study": [
+            "https://open.spotify.com/playlist/0vvXsWCC9xrXsKd4FyS8kM?si=aEAuimj4R8-7encKbkv8lg"
+        ],
+        "Gym": [
+            "https://open.spotify.com/playlist/0L33OqcgnqcdtUDhUAyfPW?si=vSKSLbnZQpig_rnjXmdLAg",
+            "https://open.spotify.com/playlist/0sPiindbOuUlsUevklWtEO?si=D9699hIAR8CejSVGeKO1Cg",
+        ],
+        "Yoga": [
+            "https://open.spotify.com/playlist/37i9dQZF1DX9uKNf5jGX6m?si=W65q_28zT0mkIwuodAQxMQ",
+            "https://open.spotify.com/playlist/59Mv9oVmx1wIQAaOoLWceY?si=Euwj3oZjQs2bugNCH67I1A",
+        ],
+        # "Meetings": [
+        #     "https://open.spotify.com/playlist/4LJ5hkgqt04IKw454SUJqV?si=_BdJz3YlS6-biDd4Kv8Fpw"
+        # ],
+        "Sleep": [
+            "https://open.spotify.com/playlist/21wbvqMl5HNxhfi2cNqsdZ?si=oalBs9Q1TyqoV1InDYeaYA",
+            "https://open.spotify.com/playlist/37i9dQZF1DWYcDQ1hSjOpY?si=cddd6iLKQVei4H4Ko-VAcg",
+        ],
+    }
+    dataset = pd.DataFrame()
+
+    # Iterating through each link to download song information
+    for tag, urls in playlist_dict.items():
+        for url in urls:
+            # Getting all songs' details in a playlist
+            songs = get_playlist_tracks(newSpotifyObject(), url)
+            # Getting song paramenters
+            song_features = get_audio_features(newSpotifyObject(), songs["IDs"])
+            finalsongs = []
+
+            # Combining aquired information into one dictionary
+            for i in range(len(song_features)):
+                # Creating a temporary song dictionary to save info
+                song = {}
+                try:
+                    song.update(song_features[i])
+                    song.update(
+                        {
+                            "Name": songs["Name"][i],
+                            "Artist": songs["Artist"][i],
+                            "Popularity": songs["Popularity"][i],
+                        }
+                    )
+                    song.update({"Tag": tag})
+                    finalsongs.append(song)
+                except:
+                    pass
+            print(len(finalsongs))
+            # Appending dictionary to final dataset
+            dataset = dataset.append(finalsongs, ignore_index=True)
+
+    # Dropping duplicates of the dataset
+    dataset = dataset.drop_duplicates(subset=["Name", "Artist"], keep="first")
+    # Saving dataset to csv so it is accessable later
+    dataset.to_csv("dataset.csv")
+
+
 def main():
     """
     This is the main function, which starts the main flow of the servers
@@ -165,6 +252,15 @@ def main():
         # If model doesnt exist, then create a new one
         nluengine = create_nlp_model()
         print("Trained and loaded new model")
+
+    # Checking for training dataset
+    if not os.path.isfile("dataset.csv"):
+        # If dataset doesnt exist, create it
+        create_dataset()
+        print("Dataset Created and saved")
+    else:
+        # If dataset exists, proceed
+        print("Dataset Found")
 
     # TODO
     # Check if ML model for song classification exists, and add to program
