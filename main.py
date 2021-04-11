@@ -28,6 +28,7 @@ from snips_nlu import SnipsNLUEngine
 from snips_nlu.dataset import dataset
 from snips_nlu.default_configs import CONFIG_EN
 from snips_nlu.exceptions import PersistingError
+from xgboost import XGBClassifier
 
 
 # Function to create NLP model
@@ -229,7 +230,6 @@ def create_dataset() -> None:
                     finalsongs.append(song)
                 except:
                     pass
-            print(len(finalsongs))
             # Appending dictionary to final dataset
             dataset = dataset.append(finalsongs, ignore_index=True)
 
@@ -237,6 +237,117 @@ def create_dataset() -> None:
     dataset = dataset.drop_duplicates(subset=["Name", "Artist"], keep="first")
     # Saving dataset to csv so it is accessable later
     dataset.to_csv("dataset.csv")
+
+
+# Function to create ML Model pickle file
+def create_ML_model() -> XGBClassifier:
+    """
+    This function creates an XGBoost Classifier and trains it with 'dataset.csv' in the root directory.
+    It saves the model for future use, and also returns to model to function call
+    Parameters Required: None
+    Return Data: Trained XGBClassifier Object (xgboost.sklearn.XGBClassifier)
+    """
+    # Creating new Model
+    model = XGBClassifier()
+    # Opening and preprocessing dataset
+    dataset = pd.read_csv("dataset.csv")
+    columns_to_be_dropped = [
+        "Unnamed: 0",
+        "type",
+        "id",
+        "uri",
+        "track_href",
+        "analysis_url",
+        "Artist",
+        "Name",
+        "Popularity",
+        "duration_ms",
+    ]
+    # Dropping columns
+    for i in columns_to_be_dropped:
+        if i in dataset.columns:
+            dataset = dataset.drop(i, axis=1)
+    # Setting 'Tag' Column as prediction column
+    Y = dataset["Tag"]
+    # Removing 'Tag' Column for X values
+    X = dataset.drop(["Tag"], axis=1)
+    # Fitting classifier with X and Y
+    model.fit(X, Y)
+    # Saving classifier using pickle to root directory
+    with open("MLModel.pickle", "wb") as handle:
+        pickle.dump(model, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    # Returning model
+    return model
+
+
+# Function to give a dictionary of song properties
+def prep_songs(song_ids: list, spotify: spotipy.client.Spotify) -> pd.DataFrame:
+    """
+    Songs passed with IDs cannot directly be used in the model. This function preps the song for the ML model
+    Parameters Required: List of song ids (from client), authenticated spotify client
+    Return Data: Pandas DataFrame of song details, for which classes can now be predicted
+    """
+    prep_set = []
+    curr_number = 0
+    tracks = []
+    # Get all details of every song passed
+    # Can only do 50 at a time, else throws an error of too many ids passed
+    while curr_number <= len(song_ids):
+        tracks.extend(
+            spotify.tracks(song_ids[curr_number : curr_number + 50])["tracks"]
+        )
+        curr_number += 50
+    # Getting audio features of all songs passed
+    features = get_audio_features(spotify, song_ids)
+    # Combining obtained data into single dictionary
+    for i in range(len(features)):
+        temp_song = features[i]
+        temp_song["Popularity"] = tracks[i]["popularity"]
+        temp_song["Name"] = tracks[i]["name"]
+        temp_song["Artist"] = tracks[i]["artists"][0]["name"]
+        # Adding dictionary to list containing all processed songs
+        prep_set.append(temp_song)
+    # Converting list of dictionaries to a pandas dataframe
+    pred_data = pd.DataFrame(prep_set)
+    # Returning Dataframe
+    return pred_data
+
+
+# Function to predict tags for given songs
+def predict_tag(pred_data: pd.DataFrame, model: XGBClassifier) -> tuple:
+    """
+    This function predicts a tag given a model and the data for which it needs to predict
+    Parameters Required: Prepared data of client song ids, ML model that is pretrained
+    Returned data: Tuple of multiple data
+        Tuple index 0: Predicted probabilites of each song belonging to one class
+        Tuple index 1: List of song ids (in order)
+        Tuple index 2: List of song names (in order)
+        Tuple index 3: List of classes (in order for predicted probabilities)
+    """
+    # Saving names and ids for return
+    names = pred_data["Name"]
+    ids = pred_data["id"]
+    # Preprocessing client input data, dropping unwanted columns
+    columns_to_be_dropped = [
+        "Unnamed: 0",
+        "type",
+        "id",
+        "uri",
+        "track_href",
+        "analysis_url",
+        "Artist",
+        "Name",
+        "Popularity",
+        "duration_ms",
+    ]
+    for i in columns_to_be_dropped:
+        if i in pred_data.columns:
+            pred_data = pred_data.drop(i, axis=1)
+    # Predicting the probability of each song belonging to each class
+    # The highest probability defines its class
+    pred = model.predict_proba(pred_data)
+    # predclass = model.predict(pred_data)
+    return pred, ids, names, model.classes_
 
 
 def main():
@@ -262,9 +373,27 @@ def main():
         # If dataset exists, proceed
         print("Dataset Found")
 
-    # TODO
-    # Check if ML model for song classification exists, and add to program
-    # Start firebase listener here
+    if not os.path.isfile("MLModel.pickle"):
+        mlmodel = create_ML_model()
+    else:
+        # Model exists, load into program
+        with open("MLModel.pickle", "rb") as handle:
+            mlmodel = pickle.load(handle)
+
+    # Testing model with given playlist
+    predsongs = prep_songs(
+        get_playlist_tracks(
+            newSpotifyObject(),
+            "https://open.spotify.com/playlist/2kUbABZX9A2m0b6fopyouM?si=DX0lgQsmRimAsG1V-oBDrA",
+        )["IDs"],
+        newSpotifyObject(),
+    )
+    ret = predict_tag(predsongs, mlmodel)
+    # Printing classes
+    print(ret[3])
+    # Printing predictions
+    for i in range(len(ret[0])):
+        print(ret[0][i], ret[1][i], ret[2][i])
 
     # Testing detect_intent()
     # string = input()
