@@ -17,6 +17,7 @@ Flow of the main program:
 
 import os
 import pickle
+import random
 import shutil
 
 import numpy as np
@@ -350,6 +351,37 @@ def predict_tag(pred_data: pd.DataFrame, model: XGBClassifier) -> tuple:
     return pred, ids, names, model.classes_
 
 
+# Function to get top 10 of each tag
+def get_best_match(intent: str, preds: tuple) -> str:
+    """
+    This funtion takes in predicted intent, and predicted probabilities, and returns the best match for both of them
+    It picks a single song from a range of top 10 best matches
+    Parameters Required: Intent of given prompt, and predicted tuple from predict_tag function
+    Return Data: Single string of song ID
+    """
+    # Get index of required intent to process specific probability
+    index = list(preds[3]).index(intent.capitalize())
+    combinedlist = []
+    # Combine name, probability and id lists into one list (for easy sorting)
+    for i in range(len(preds[0])):
+        combinedlist.append([preds[0][i], preds[1][i], preds[2][i]])
+
+    # Sort key function to return specific song
+    def sortlst(element):
+        return element[0][index]
+
+    # Sort combined list
+    combinedlist.sort(key=sortlst, reverse=True)
+    # Choose top 10 songs to randomize from
+    listofchosensongs = [i[1] for i in combinedlist[:10]]
+
+    # Names of chosen songs, uncomment to access
+    # nameofsongs = [i[2] for i in combinedlist[:10]]
+
+    final_choice = random.choice(listofchosensongs)
+    return "spotify:track:" + final_choice
+
+
 def main():
     """
     This is the main function, which starts the main flow of the servers
@@ -380,20 +412,31 @@ def main():
         with open("MLModel.pickle", "rb") as handle:
             mlmodel = pickle.load(handle)
 
-    # Testing model with given playlist
-    predsongs = prep_songs(
-        get_playlist_tracks(
-            newSpotifyObject(),
-            "https://open.spotify.com/playlist/2kUbABZX9A2m0b6fopyouM?si=DX0lgQsmRimAsG1V-oBDrA",
-        )["IDs"],
+    # Testing song return
+    phrase = "i just want to run"
+    playlist_link = "https://open.spotify.com/playlist/3It5BuAucg59mpLzILUS70?si=qM4OTc87QGq66t3N70OHXw"
+    intent = detect_intent(nluengine, phrase)["intent"]
+    prepared = prep_songs(
+        get_playlist_tracks(newSpotifyObject(), playlist_link)["IDs"],
         newSpotifyObject(),
     )
-    ret = predict_tag(predsongs, mlmodel)
-    # Printing classes
-    print(ret[3])
-    # Printing predictions
-    for i in range(len(ret[0])):
-        print(ret[0][i], ret[1][i], ret[2][i])
+    ret = predict_tag(prepared, mlmodel)
+    print(get_best_match(intent, ret))
+
+    # Testing model with given playlist
+    # predsongs = prep_songs(
+    #     get_playlist_tracks(
+    #         newSpotifyObject(),
+    #         "https://open.spotify.com/playlist/2kUbABZX9A2m0b6fopyouM?si=DX0lgQsmRimAsG1V-oBDrA",
+    #     )["IDs"],
+    #     newSpotifyObject(),
+    # )
+    # ret = predict_tag(predsongs, mlmodel)
+    # # Printing classes
+    # print(ret[3])
+    # # Printing predictions
+    # for i in range(len(ret[0])):
+    #     print(ret[0][i], ret[1][i], ret[2][i])
 
     # Testing detect_intent()
     # string = input()
