@@ -360,6 +360,13 @@ def get_best_match(intent: str, preds: tuple) -> str:
     Return Data: Single string of song ID
     """
     # Get index of required intent to process specific probability
+    if intent not in ["gym", "sleep", "study", "yoga"]:
+        if intent == "reminder":
+            intent = "yoga"
+        elif intent == "travel":
+            intent = "gym"
+        else:
+            intent = "gym"
     index = list(preds[3]).index(intent.capitalize())
     combinedlist = []
     # Combine name, probability and id lists into one list (for easy sorting)
@@ -382,9 +389,15 @@ def get_best_match(intent: str, preds: tuple) -> str:
     return "spotify:track:" + final_choice
 
 
-def main():
+# Function to verify all major files are present
+def startup() -> tuple:
     """
-    This is the main function, which starts the main flow of the servers
+    This function returns the NLU model and the ML model after verifying its presence in the root directory
+    It also creates a trainable dataset if it isnt present in the root directory
+    Parameters Required: None
+    Return data: tuple
+        index 1: NLU Model
+        index 2: ML Model
     """
     # Initializing NLPU
     if os.path.isdir("nlumodel"):
@@ -411,10 +424,19 @@ def main():
         # Model exists, load into program
         with open("MLModel.pickle", "rb") as handle:
             mlmodel = pickle.load(handle)
+    return nluengine, mlmodel
 
-    # Testing song return
-    phrase = "i just want to run"
-    playlist_link = "https://open.spotify.com/playlist/3It5BuAucg59mpLzILUS70?si=qM4OTc87QGq66t3N70OHXw"
+
+# Function that is called only when the file is directly run
+def main():
+    """
+    This function is used for testing purposes, and is run only when the main file is run
+    """
+    nluengine, mlmodel = startup()
+
+    # Testing all functions
+    phrase = input("Enter a prompt: ")
+    playlist_link = input("Enter a playlist url: ")
     intent = detect_intent(nluengine, phrase)["intent"]
     prepared = prep_songs(
         get_playlist_tracks(newSpotifyObject(), playlist_link)["IDs"],
@@ -423,35 +445,8 @@ def main():
     ret = predict_tag(prepared, mlmodel)
     print(get_best_match(intent, ret))
 
-    # Testing model with given playlist
-    # predsongs = prep_songs(
-    #     get_playlist_tracks(
-    #         newSpotifyObject(),
-    #         "https://open.spotify.com/playlist/2kUbABZX9A2m0b6fopyouM?si=DX0lgQsmRimAsG1V-oBDrA",
-    #     )["IDs"],
-    #     newSpotifyObject(),
-    # )
-    # ret = predict_tag(predsongs, mlmodel)
-    # # Printing classes
-    # print(ret[3])
-    # # Printing predictions
-    # for i in range(len(ret[0])):
-    #     print(ret[0][i], ret[1][i], ret[2][i])
-
-    # Testing detect_intent()
-    # string = input()
-    # output_intent = detect_intent(nluengine, string)
-    # print(output_intent)
-    # return 0
-
-    # Testing newSpotifyObject(), playlist_song_ids(), and get_audio_features()
-    # playlist_song_ids = get_playlist_tracks(
-    #     newSpotifyObject(),
-    #    "https://open.spotify.com/playlist/3It5BuAucg59mpLzILUS70?si=8MrxgpaWQhmvzLl1sBA_2A",
-    # )
-    # print(playlist_song_ids)
-    # print(get_audio_features(newSpotifyObject(), playlist_song_ids))
-
 
 # Start main function
-main()
+if __name__ == "__main__":
+    # This is only for running tests
+    main()
