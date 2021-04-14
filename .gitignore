@@ -3,3 +3,4 @@ serviceacc.json
 nlumodel/
 dataset.csv
 MLModel.pickle
+__pycache__
