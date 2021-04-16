@@ -7,7 +7,6 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 
-
 # Creating a class for the received data
 class req(BaseModel):
     prompt: str

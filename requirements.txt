@@ -1,4 +1,10 @@
 spotipy
-pyrebase4
 setuptools-rust
 snips-nlu
+fastapi
+pydantic
+numpy
+pandas
+yaml
+xgboost
+sklearn
