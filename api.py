@@ -2,41 +2,56 @@
 # pylint: disable=no-name-in-module
 from typing import Optional
 
+import main
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-import main
 
 
 # Creating a class for the received data
 class req(BaseModel):
     prompt: str
-    songlist: str = None
+    songlist: str
+
+
+class req_playlist(BaseModel):
+    prompt: str
+    playlist: str
 
 
 # FastAPI Object
 app = FastAPI()
 
-
-# Starting main program
-# Returning NLUEngine and MLModel is wrong, will change in next commit
-NLUEngine, MLModel = main.startup()
-
-
-# Defining method and path with a decorator
+# Function to run backend on a playlist url
 @app.post("/playlist")
-async def get_song(data: req):
-    # Predicting song with provided data
+async def get_song_playlist(data: req_playlist):
+    """
+    This function is triggered when a POST request is received at '/playlist'
+    The POST data required is in the form:
+        {
+            prompt: "example prompt",
+            playlist: "playlist url"
+        }
+    """
+    # Converting received data to dict to make it accessable
     retdata = dict(data)
-    intent = main.detect_intent(NLUEngine, retdata["prompt"])["intent"]
-    url = retdata["songlist"]
-    prepared = main.prep_songs(
-        main.get_playlist_tracks(main.newSpotifyObject(), url)["IDs"],
-        main.newSpotifyObject(),
-    )
-    ret = main.predict_tag(prepared, MLModel)
-    # Returning song
-    return {"song": main.get_best_match(intent, ret), "intent": intent}
+    return main.apicall_playlist(retdata["prompt"], retdata["playlist"])
+
+
+# Function to run backend on a list of song IDs seperated with a semicolon
+@app.post("/")
+async def get_song(data: req):
+    """
+    This function is triggered when a POST request is received at '/playlist'
+    The POST data required is in the form:
+        {
+            prompt: "example prompt",
+            playlist: "playlist url"
+        }
+    """
+    # Converting received data to dict to make it accessable
+    retdata = dict(data)
+    return main.apicall_songlist(retdata["prompt"], retdata["songlist"])
 
 
 # Get method to check if backend is online
