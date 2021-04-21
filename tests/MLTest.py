@@ -71,7 +71,7 @@ def songpred(model, X, Y):
 
     # Opening credential file
     with open("creds.yaml") as file:
-        creds = yaml.full_load(file)
+        creds = yaml.load(file)
 
     cli_id = creds["spotify client id"]
     cli_sec = creds["spotify client secret"]
