@@ -295,10 +295,14 @@ def prep_songs(song_ids: list, spotify: spotipy.client.Spotify) -> pd.DataFrame:
     # Get all details of every song passed
     # Can only do 50 at a time, else throws an error of too many ids passed
     while curr_number <= len(song_ids):
-        tracks.extend(
-            spotify.tracks(song_ids[curr_number : curr_number + 50])["tracks"]
-        )
-        curr_number += 50
+        # Checking if it is empty
+        if song_ids[curr_number : curr_number + 50]:
+            tracks.extend(
+                spotify.tracks(song_ids[curr_number : curr_number + 50])["tracks"]
+            )
+            curr_number += 50
+        else:
+            break
     # Getting audio features of all songs passed
     features = get_audio_features(spotify, song_ids)
     # Combining obtained data into single dictionary
