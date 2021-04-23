@@ -5,6 +5,7 @@ fastapi
 pydantic
 numpy
 pandas
-yaml
+pyyaml
+uvicorn
 xgboost
 sklearn
